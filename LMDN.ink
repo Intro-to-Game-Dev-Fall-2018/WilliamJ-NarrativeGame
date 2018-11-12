@@ -24,7 +24,7 @@ Kayla: is it online? can i see it? ^^
 
 + [yup yup~ i put it up on my new domain <style=link><link=LariaShrine>lost-memories.net/laria</link></style>] -> Kayla_1_1_3A
 
-
+    
 
 === Kayla_1_1_2B
 Kayla: I wish we lived close so I could come try it! I don't have a ps2 T_T
