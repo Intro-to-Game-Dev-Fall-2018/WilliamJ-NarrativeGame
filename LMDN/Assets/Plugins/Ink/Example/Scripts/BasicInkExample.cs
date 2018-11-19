@@ -9,8 +9,11 @@ public class BasicInkExample : MonoBehaviour {
 
     public GameObject chatPanel, textObject;
 
+	public int curr = 1;
+
     [SerializeField]
-    List<Message> msgList = new List<Message>();
+    List<Message> msgListKayla = new List<Message>();
+    List<Message> msgListAmy = new List<Message>();
 
 
 
@@ -53,6 +56,14 @@ public class BasicInkExample : MonoBehaviour {
 				// Tell the button what to do when we press it
 				button.onClick.AddListener (delegate {
 					OnClickChoiceButton (choice);
+					if (button.GetComponentInChildren<Text>().text.Equals("Message Kayla"))
+					{
+						curr = 1;
+					}
+					else if(button.GetComponentInChildren<Text>().text.Equals("Message Amy"))
+					{
+						curr = 2;
+					}
                     receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
 				});
 			}
@@ -107,7 +118,7 @@ public class BasicInkExample : MonoBehaviour {
     public void receiveMessage(string text)
     {
         Message newMsg = new Message();
-
+	
         newMsg.text = text;
 
         GameObject newTxt = Instantiate(textObject, chatPanel.transform);
@@ -116,7 +127,7 @@ public class BasicInkExample : MonoBehaviour {
 
         newMsg.textObject.text = newMsg.text;
 
-        msgList.Add(newMsg);
+        msgListKayla.Add(newMsg);
     }
 
 
