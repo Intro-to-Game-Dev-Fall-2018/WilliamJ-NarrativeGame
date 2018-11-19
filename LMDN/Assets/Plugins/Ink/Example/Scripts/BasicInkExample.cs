@@ -1,11 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using Ink.Runtime;
 
 // This is a super bare bones example of how to play and display a ink story in Unity.
 public class BasicInkExample : MonoBehaviour {
-	
+
+    public GameObject chatPanel, textObject;
+
+    [SerializeField]
+    List<Message> msgList = new List<Message>();
+
+
+
 	void Awake () {
 		// Remove the default message
 		RemoveChildren();
@@ -32,7 +40,9 @@ public class BasicInkExample : MonoBehaviour {
 			// This removes any white space from the text.
 			text = text.Trim();
 			// Display the text on screen!
-			CreateContentView(text);
+			//CreateContentView(text);
+
+            receiveMessage(text);
 		}
 
 		// Display all the choices, if there are any!
@@ -93,6 +103,22 @@ public class BasicInkExample : MonoBehaviour {
 		}
 	}
 
+    public void receiveMessage(string text)
+    {
+        Message newMsg = new Message();
+
+        newMsg.text = text;
+
+        GameObject newTxt = Instantiate(textObject, chatPanel.transform);
+
+        newMsg.textObject = newTxt.GetComponent<Text>();
+
+        newMsg.textObject.text = newMsg.text;
+
+        msgList.Add(newMsg);
+    }
+
+
 	[SerializeField]
 	private TextAsset inkJSONAsset;
 	private Story story;
@@ -105,4 +131,11 @@ public class BasicInkExample : MonoBehaviour {
 	private Text textPrefab;
 	[SerializeField]
 	private Button buttonPrefab;
+}
+
+[System.Serializable]
+public class Message
+{
+    public string text;
+    public Text textObject;
 }
