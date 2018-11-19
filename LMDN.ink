@@ -4,9 +4,9 @@ You open your messenger app.
 
 = Msg1 
 * {not Kayla_1_1_8A} [Message Kayla] -> Kayla_1_1
-* {Kayla_1_1_8A} [Message Kayla] -> Kayla_1_2
-* {Kayla_1_1_8A} [Message Amy] -> Amy_1_1
-
+* {Kayla_1_1_8A} {not Kayla_1_2} [Message Kayla] -> Kayla_1_2
+* {Kayla_1_1_8A} {not Amy_1_1} [Message Amy] -> Amy_1_1
+* {Kayla_1_2} {Amy_1_1} [...] -> END
 
 
 
