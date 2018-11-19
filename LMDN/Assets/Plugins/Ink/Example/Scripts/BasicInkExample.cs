@@ -53,6 +53,7 @@ public class BasicInkExample : MonoBehaviour {
 				// Tell the button what to do when we press it
 				button.onClick.AddListener (delegate {
 					OnClickChoiceButton (choice);
+                    receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
 				});
 			}
 		}
