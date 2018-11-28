@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using Ink.Runtime;
 
 // This is a super bare bones example of how to play and display a ink story in Unity.
-public class BasicInkExample : MonoBehaviour {
+public class BasicInkExample : MonoBehaviour
+{
 
-    public GameObject chatPanel, textObject;
+	public GameObject chatPanel, textObject, msgObject;
 
 	public int curr = 1;
 
@@ -121,13 +122,19 @@ public class BasicInkExample : MonoBehaviour {
 	
         newMsg.text = text;
 
-        GameObject newTxt = Instantiate(textObject, chatPanel.transform);
+        //GameObject newTxt = Instantiate(textObject, chatPanel.transform);
 
-        newMsg.textObject = newTxt.GetComponent<Text>();
+	    GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-        newMsg.textObject.text = newMsg.text;
+	    newMsgO.GetComponentInChildren<Text>().text = text;
 
-        msgListKayla.Add(newMsg);
+        //newMsg.textObject = newTxt.GetComponent<Text>();
+
+        //newMsg.textObject.text = newMsg.text;
+
+	    newMsg.mo = newMsgO;
+	    
+	    msgListKayla.Add(newMsg);
     }
 
 
@@ -149,5 +156,6 @@ public class BasicInkExample : MonoBehaviour {
 public class Message
 {
     public string text;
-    public Text textObject;
+    //public Text textObject;
+	public GameObject mo;
 }
