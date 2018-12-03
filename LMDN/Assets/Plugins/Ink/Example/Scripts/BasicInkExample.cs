@@ -10,7 +10,23 @@ public class BasicInkExample : MonoBehaviour
 
 	public GameObject chatPanel, textObject, msgObject;
 
-	public int curr = 1;
+    public Text header, headerStatus, amyChatStatus, kaylaChatStatus;
+
+    public Button kaylaB, amyB;
+
+	public int currState = 1;
+
+    public List<Message> currentList;
+
+    public bool k1 = false;
+    public bool k2 = false;
+    public bool a1 = false;
+
+    public TextAsset inkJSONAsset1;
+    public TextAsset inkJSONAsset2;
+    public TextAsset currAsset;
+
+    bool inBetween;
 
     [SerializeField]
     List<Message> msgListKayla = new List<Message>();
@@ -21,12 +37,26 @@ public class BasicInkExample : MonoBehaviour
 	void Awake () {
 		// Remove the default message
 		RemoveChildren();
-		StartStory();
+
+        kaylaB.onClick.AddListener(delegate {
+            OnClickChangeChat("Kayla");
+        });
+
+        amyB.onClick.AddListener(delegate {
+            OnClickChangeChat("Amy");
+        });
+
+        currAsset = inkJSONAsset;
+        inBetween = false;
+
+        currentList = msgListKayla;
+
+        StartStory();
 	}
 
 	// Creates a new Story object with the compiled story which we can then play!
 	void StartStory () {
-		story = new Story (inkJSONAsset.text);
+		story = new Story (currAsset.text);
 		RefreshView();
 	}
 	
@@ -57,24 +87,28 @@ public class BasicInkExample : MonoBehaviour
 				// Tell the button what to do when we press it
 				button.onClick.AddListener (delegate {
 					OnClickChoiceButton (choice);
-					if (button.GetComponentInChildren<Text>().text.Equals("Message Kayla"))
-					{
-						curr = 1;
-					}
-					else if(button.GetComponentInChildren<Text>().text.Equals("Message Amy"))
-					{
-						curr = 2;
-					}
                     receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
 				});
 			}
 		}
 		// If we've read all the content and there's no choices, the story is finished!
 		else {
-			Button choice = CreateChoiceView("End of story.\nRestart?");
-			choice.onClick.AddListener(delegate{
-				StartStory();
-			});
+            if(currAsset == inkJSONAsset)
+            {
+                k1 = true;
+                amyChatStatus.text = "Active";
+            }
+            else if(currAsset == inkJSONAsset1)
+            {
+                k2 = true;
+                kaylaChatStatus.text = "Offline";
+            }
+            else
+            {
+                amyChatStatus.text = "Offline";
+                a1 = true;
+            }
+            inBetween = true;
 		}
 	}
 
@@ -83,6 +117,128 @@ public class BasicInkExample : MonoBehaviour
 		story.ChooseChoiceIndex (choice.index);
 		RefreshView();
 	}
+
+
+    void OnClickChangeChat(string person)
+    {
+        if(person.Equals("Kayla"))
+        {
+            currentList = msgListKayla;
+            if (inBetween && !k2)
+            {
+                inBetween = false;
+                currAsset = inkJSONAsset1;
+                StartStory();
+            }
+            header.text = person;
+            if(k2)
+            {
+                headerStatus.text = "Offline";
+                //RemoveChildren();
+            }
+            else
+            {
+                headerStatus.text = "Active";
+            }
+
+            destroyCurrentChat();
+
+            for(int i = 0; i < currentList.Count; i++)
+            {
+                GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+
+                newMsgO.GetComponentInChildren<Text>().text = currentList[i].text;
+
+                //newMsg.textObject = newTxt.GetComponent<Text>();
+
+                //newMsg.textObject.text = newMsg.text;
+
+                currentList[i].mo = newMsgO;
+            }
+
+            if(currAsset == inkJSONAsset2)
+            {
+                RemoveChildren();
+            }
+            else
+            {
+                if(canvas.transform.childCount == 0) {
+                    if (story.currentChoices.Count > 0)
+                    {
+                        for (int i = 0; i < story.currentChoices.Count; i++)
+                        {
+                            Choice choice = story.currentChoices[i];
+                            Button button = CreateChoiceView(choice.text.Trim());
+                            // Tell the button what to do when we press it
+                            button.onClick.AddListener(delegate {
+                                OnClickChoiceButton(choice);
+                                receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                            });
+                        }
+                    }
+                }
+            }
+
+        }
+        if (person.Equals("Amy"))
+        {
+            currentList = msgListAmy;
+            if (inBetween && !a1)
+            {
+                inBetween = false;
+                currAsset = inkJSONAsset2;
+                StartStory();
+            }
+            header.text = person;
+            if (!k1 || a1)
+            {
+                headerStatus.text = "Offline";
+                //RemoveChildren();
+            }
+            else
+            {
+                headerStatus.text = "Active";
+            }
+
+            destroyCurrentChat();
+
+            for (int i = 0; i < currentList.Count; i++)
+            {
+                GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+
+                newMsgO.GetComponentInChildren<Text>().text = currentList[i].text;
+
+                //newMsg.textObject = newTxt.GetComponent<Text>();
+
+                //newMsg.textObject.text = newMsg.text;
+
+                currentList[i].mo = newMsgO;
+            }
+
+            if (currAsset == inkJSONAsset || currAsset == inkJSONAsset1)
+            {
+                RemoveChildren();
+            }
+            else
+            {
+                if (canvas.transform.childCount == 0) {
+                    if (story.currentChoices.Count > 0)
+                    {
+                        for (int i = 0; i < story.currentChoices.Count; i++)
+                        {
+                            Choice choice = story.currentChoices[i];
+                            Button button = CreateChoiceView(choice.text.Trim());
+                            // Tell the button what to do when we press it
+                            button.onClick.AddListener(delegate {
+                                OnClickChoiceButton(choice);
+                                receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 	// Creates a button showing the choice text
 	void CreateContentView (string text) {
@@ -116,6 +272,15 @@ public class BasicInkExample : MonoBehaviour
 		}
 	}
 
+    void destroyCurrentChat()
+    {
+        int childCount = chatPanel.transform.childCount;
+        for (int i = childCount - 1; i >= 0; --i)
+        {
+            GameObject.Destroy(chatPanel.transform.GetChild(i).gameObject);
+        }
+    }
+
     public void receiveMessage(string text)
     {
         Message newMsg = new Message();
@@ -134,13 +299,13 @@ public class BasicInkExample : MonoBehaviour
 
 	    newMsg.mo = newMsgO;
 	    
-	    msgListKayla.Add(newMsg);
+	    currentList.Add(newMsg);
     }
 
 
 	[SerializeField]
 	private TextAsset inkJSONAsset;
-	private Story story;
+    private Story story;
 
 	[SerializeField]
 	private Canvas canvas;
