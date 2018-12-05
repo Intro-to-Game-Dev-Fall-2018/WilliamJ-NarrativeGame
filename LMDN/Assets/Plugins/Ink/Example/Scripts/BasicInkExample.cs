@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Ink.Runtime;
 
 // This is a super bare bones example of how to play and display a ink story in Unity.
@@ -147,7 +148,7 @@ public class BasicInkExample : MonoBehaviour
             {
                 GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-                newMsgO.GetComponentInChildren<Text>().text = currentList[i].text;
+                newMsgO.GetComponentInChildren<TextMeshPro>().SetText(currentList[i].text);
 
                 //newMsg.textObject = newTxt.GetComponent<Text>();
 
@@ -206,7 +207,7 @@ public class BasicInkExample : MonoBehaviour
             {
                 GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-                newMsgO.GetComponentInChildren<Text>().text = currentList[i].text;
+                newMsgO.GetComponentInChildren<TextMeshPro>().SetText(currentList[i].text);
 
                 //newMsg.textObject = newTxt.GetComponent<Text>();
 
@@ -291,7 +292,7 @@ public class BasicInkExample : MonoBehaviour
 
 	    GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-	    newMsgO.GetComponentInChildren<Text>().text = text;
+	    newMsgO.GetComponentInChildren<TextMeshPro>().SetText(text);
 
         //newMsg.textObject = newTxt.GetComponent<Text>();
 
