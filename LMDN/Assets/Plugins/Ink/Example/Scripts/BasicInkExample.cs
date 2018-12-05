@@ -9,7 +9,7 @@ using Ink.Runtime;
 public class BasicInkExample : MonoBehaviour
 {
 
-	public GameObject chatPanel, textObject, msgObject;
+	public GameObject chatPanel, msgObject;
 
     public Text header, headerStatus, amyChatStatus, kaylaChatStatus;
 
@@ -148,7 +148,7 @@ public class BasicInkExample : MonoBehaviour
             {
                 GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-                newMsgO.GetComponentInChildren<TextMeshPro>().SetText(currentList[i].text);
+                newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(currentList[i].text);
 
                 //newMsg.textObject = newTxt.GetComponent<Text>();
 
@@ -207,7 +207,7 @@ public class BasicInkExample : MonoBehaviour
             {
                 GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-                newMsgO.GetComponentInChildren<TextMeshPro>().SetText(currentList[i].text);
+                newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(currentList[i].text);
 
                 //newMsg.textObject = newTxt.GetComponent<Text>();
 
@@ -291,8 +291,10 @@ public class BasicInkExample : MonoBehaviour
         //GameObject newTxt = Instantiate(textObject, chatPanel.transform);
 
 	    GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+	    
+	    //Debug.Log(newMsgO.GetComponentInChildren<TextMeshPro>());
 
-	    newMsgO.GetComponentInChildren<TextMeshPro>().SetText(text);
+	    newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(text);
 
         //newMsg.textObject = newTxt.GetComponent<Text>();
 
