@@ -22,6 +22,7 @@ public class BasicInkExample : MonoBehaviour
     public bool k1 = false;
     public bool k2 = false;
     public bool a1 = false;
+    public bool trans = false;
 
     public TextAsset inkJSONAsset1;
     public TextAsset inkJSONAsset2;
@@ -70,36 +71,76 @@ public class BasicInkExample : MonoBehaviour
 		
 		// Read all the content until we can't continue any more
 		while (story.canContinue) {
-			// Continue gets the next line of the story
-			string text = story.Continue ();
-			// This removes any white space from the text.
-			text = text.Trim();
-			// Display the text on screen!
-			//CreateContentView(text);
-
-            receiveMessage(text);
+            // Continue gets the next line of the story
+            string text = story.Continue();
+            // This removes any white space from the text.
+            text = text.Trim();
+            // Display the text on screen!
+            //CreateContentView(text);
+            StartCoroutine("transition", text);
 		}
 
-		// Display all the choices, if there are any!
-		if(story.currentChoices.Count > 0) {
-			for (int i = 0; i < story.currentChoices.Count; i++) {
-				Choice choice = story.currentChoices [i];
-				Button button = CreateChoiceView (choice.text.Trim ());
-				// Tell the button what to do when we press it
-				button.onClick.AddListener (delegate {
-					OnClickChoiceButton (choice);
-                    receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
-				});
-			}
-		}
-		// If we've read all the content and there's no choices, the story is finished!
-		else {
-            if(currAsset == inkJSONAsset)
+        StartCoroutine("transitionChoice");
+        //logicChoiceCreation();
+		//// Display all the choices, if there are any!
+		//if(story.currentChoices.Count > 0) {
+		//	for (int i = 0; i < story.currentChoices.Count; i++) {
+		//		Choice choice = story.currentChoices [i];
+		//		Button button = CreateChoiceView (choice.text.Trim ());
+		//		// Tell the button what to do when we press it
+		//		button.onClick.AddListener (delegate {
+		//			OnClickChoiceButton (choice);
+  //                  //receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+		//		});
+		//	}
+		//}
+		//// If we've read all the content and there's no choices, the story is finished!
+		//else {
+  //          if(currAsset == inkJSONAsset)
+  //          {
+  //              k1 = true;
+  //              amyChatStatus.text = "Active";
+  //          }
+  //          else if(currAsset == inkJSONAsset1)
+  //          {
+  //              k2 = true;
+  //              kaylaChatStatus.text = "Offline";
+  //          }
+  //          else
+  //          {
+  //              amyChatStatus.text = "Offline";
+  //              a1 = true;
+  //          }
+  //          inBetween = true;
+		//}
+	}
+
+
+    void logicChoiceCreation()
+    {
+        // Display all the choices, if there are any!
+        if (story.currentChoices.Count > 0)
+        {
+            for (int i = 0; i < story.currentChoices.Count; i++)
+            {
+                Choice choice = story.currentChoices[i];
+                Button button = CreateChoiceView(choice.text.Trim());
+                // Tell the button what to do when we press it
+                button.onClick.AddListener(delegate {
+                    OnClickChoiceButton(choice);
+                    //receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                });
+            }
+        }
+        // If we've read all the content and there's no choices, the story is finished!
+        else
+        {
+            if (currAsset == inkJSONAsset)
             {
                 k1 = true;
                 amyChatStatus.text = "Active";
             }
-            else if(currAsset == inkJSONAsset1)
+            else if (currAsset == inkJSONAsset1)
             {
                 k2 = true;
                 kaylaChatStatus.text = "Offline";
@@ -110,13 +151,14 @@ public class BasicInkExample : MonoBehaviour
                 a1 = true;
             }
             inBetween = true;
-		}
-	}
+        }
+    }
 
 	// When we click the choice button, tell the story to choose that choice!
 	void OnClickChoiceButton (Choice choice) {
 		story.ChooseChoiceIndex (choice.index);
-		RefreshView();
+        receiveMessage("You: " + choice.text.Trim());
+        RefreshView();
 	}
 
 
@@ -173,7 +215,7 @@ public class BasicInkExample : MonoBehaviour
                             // Tell the button what to do when we press it
                             button.onClick.AddListener(delegate {
                                 OnClickChoiceButton(choice);
-                                receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                                //receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
                             });
                         }
                     }
@@ -232,7 +274,7 @@ public class BasicInkExample : MonoBehaviour
                             // Tell the button what to do when we press it
                             button.onClick.AddListener(delegate {
                                 OnClickChoiceButton(choice);
-                                receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                                //receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
                             });
                         }
                     }
@@ -284,25 +326,114 @@ public class BasicInkExample : MonoBehaviour
 
     public void receiveMessage(string text)
     {
+
         Message newMsg = new Message();
-	
+
         newMsg.text = text;
 
         //GameObject newTxt = Instantiate(textObject, chatPanel.transform);
 
-	    GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
-	    
-	    //Debug.Log(newMsgO.GetComponentInChildren<TextMeshPro>());
+        GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-	    newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(text);
+        //Debug.Log(newMsgO.GetComponentInChildren<TextMeshPro>());
+
+        newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(text);
 
         //newMsg.textObject = newTxt.GetComponent<Text>();
 
         //newMsg.textObject.text = newMsg.text;
 
-	    newMsg.mo = newMsgO;
-	    
-	    currentList.Add(newMsg);
+        newMsg.mo = newMsgO;
+
+        currentList.Add(newMsg);
+
+    }
+
+    IEnumerator transition(string text)
+    {
+
+        while(trans)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        trans = true;
+
+        float timer = Random.Range(0.75f, 3.0f);
+
+        Message transitionMsg = new Message();
+
+        transitionMsg.text = "...";
+
+        GameObject newMsg0 = Instantiate(msgObject, chatPanel.transform);
+
+        newMsg0.GetComponentInChildren<TextMeshProUGUI>().SetText("...");
+
+        transitionMsg.mo = newMsg0;
+
+        currentList.Add(transitionMsg);
+
+        while(timer > 0)
+        {
+            yield return new WaitForSeconds(0.1f);
+            timer -= 0.1f;
+        }
+
+        currentList.Remove(transitionMsg);
+
+        Destroy(newMsg0);
+
+        trans = false;
+
+        receiveMessage(text);
+
+        yield return null;
+    }
+
+    IEnumerator transitionChoice()
+    {
+        while(trans)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // Display all the choices, if there are any!
+        if (story.currentChoices.Count > 0)
+        {
+            for (int i = 0; i < story.currentChoices.Count; i++)
+            {
+                Choice choice = story.currentChoices[i];
+                Button button = CreateChoiceView(choice.text.Trim());
+                // Tell the button what to do when we press it
+                button.onClick.AddListener(delegate {
+                    OnClickChoiceButton(choice);
+                    //receiveMessage("You: " + button.GetComponentInChildren<Text>().text);
+                });
+            }
+        }
+        // If we've read all the content and there's no choices, the story is finished!
+        else
+        {
+            if (currAsset == inkJSONAsset)
+            {
+                k1 = true;
+                amyChatStatus.text = "Active";
+            }
+            else if (currAsset == inkJSONAsset1)
+            {
+                k2 = true;
+                kaylaChatStatus.text = "Offline";
+            }
+            else
+            {
+                amyChatStatus.text = "Offline";
+                a1 = true;
+            }
+            inBetween = true;
+        }
+
+        yield return null;
+
     }
 
 
