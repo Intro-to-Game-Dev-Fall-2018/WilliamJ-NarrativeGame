@@ -66,7 +66,13 @@ public class BasicInkExample : MonoBehaviour
         StartStory();
 	}
 
-	// Creates a new Story object with the compiled story which we can then play!
+
+    private void Start()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    // Creates a new Story object with the compiled story which we can then play!
 	void StartStory () {
 		story = new Story (currAsset.text);
         RefreshView();
