@@ -30,13 +30,23 @@ public class BasicInkExample : MonoBehaviour
 
     bool inBetween;
 
+    public AudioSource ping;
+    public AudioSource typing;
+
+    public Text time;
+
     [SerializeField]
     List<Message> msgListKayla = new List<Message>();
     List<Message> msgListAmy = new List<Message>();
 
+    private void Update()
+    {
+        time.text = System.DateTime.Now.ToString();
+    }
 
 
-	void Awake () {
+
+    void Awake () {
 		// Remove the default message
 		RemoveChildren();
 
@@ -59,7 +69,7 @@ public class BasicInkExample : MonoBehaviour
 	// Creates a new Story object with the compiled story which we can then play!
 	void StartStory () {
 		story = new Story (currAsset.text);
-		RefreshView();
+        RefreshView();
 	}
 	
 	// This is the main function called every time the story changes. It does a few things:
@@ -351,6 +361,10 @@ public class BasicInkExample : MonoBehaviour
 
     IEnumerator transition(string text)
     {
+        if(text.Length == 0)
+        {
+            yield return null;
+        }
 
         while(trans)
         {
@@ -358,6 +372,8 @@ public class BasicInkExample : MonoBehaviour
         }
 
         trans = true;
+
+        typing.Play();
 
         float timer = Random.Range(0.75f, 3.0f);
 
@@ -385,7 +401,11 @@ public class BasicInkExample : MonoBehaviour
 
         trans = false;
 
+        typing.Stop();
+
         receiveMessage(text);
+
+        ping.Play();
 
         yield return null;
     }

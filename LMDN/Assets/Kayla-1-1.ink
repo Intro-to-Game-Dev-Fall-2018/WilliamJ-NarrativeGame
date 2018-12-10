@@ -8,7 +8,7 @@ Kayle: are you ok :_:? or... did you just stay up late playing video games lol
 
 Kayla: is it online? can i see it? ^^
 
-+ [yup yup~ i put it up on my new domain <style=link><link=LariaShrine>lost-memories.net/laria</link></style>] -> Kayla_1_1_3A
++ [yup yup~ i put it up on my new domain lost-memories.net/laria] -> Kayla_1_1_3A
 
     
 
@@ -42,7 +42,7 @@ Kayla: yeah... i dont really have any irl family or friends who like this stuff.
 + [...] -> END
 
 === Kayla_1_1_4A
-Kayla: btw i was just looking up wing saga and jun is so cute??? the fanlisting just went up too <style=link><link=JunFanlisting>sunsetcalm.net/jun</link></style>
+Kayla: btw i was just looking up wing saga and jun is so cute??? the fanlisting just went up too sunsetcalm.net/jun
 
 + [omg ya... i set jun as my wallpaper and my dad came in and he made fun of me for it -_-] -> Kayla_1_1_5A
 
@@ -53,7 +53,7 @@ Kayla: Haha my mom would totally kill me if I got caught skipping
 + [as long as i get good grades i doubt she cares if i skip] -> Kayla_1_1_4A
 
 === Kayla_1_1_4B 
-Kayla: oh noooo someone got approved for jun last week... it actually just went up <style=link><link=JunFanlisting>sunsetcalm.net/jun</link></style> ahhh she used the new promo art, it's so pretty
+Kayla: oh noooo someone got approved for jun last week... it actually just went up sunsetcalm.net/jun ahhh she used the new promo art, it's so pretty
 
 + [haha oops yeah i hadn't even checked if it was taken yet... my dad saw my jun wallpaper and made fun of me for it -_-] -> Kayla_1_1_5A
 
@@ -66,4 +66,4 @@ Kayla: if my parents found my cardcap fanfic..... I have no idea what they would
 === Kayla_1_1_3A
 Kayla: omg that is really cool! i need to make a new shrine soon too... ive just been making too many fanlistings ^^;
 
-+ [omg like for <style=link><link=Fanlisting_Site>fanlistings.org</link></style>? i wanna apply for the xenosaba jun listing... i love him lol] -> Kayla_1_1_4B
++ [omg like for fanlistings.org? i wanna apply for the xenosaba jun listing... i love him lol] -> Kayla_1_1_4B
