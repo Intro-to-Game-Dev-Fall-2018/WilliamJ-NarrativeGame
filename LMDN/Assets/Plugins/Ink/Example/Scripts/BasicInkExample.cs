@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Ink.Runtime;
+using UnityEngine.Networking;
 
 // This is a super bare bones example of how to play and display a ink story in Unity.
 public class BasicInkExample : MonoBehaviour
@@ -31,6 +32,7 @@ public class BasicInkExample : MonoBehaviour
     public TextAsset currAsset;
 
     public AudioSource musicPlayer;
+    public AudioSource speechPlayer;
 
     public AudioClip secrets, howl, moon;
 
@@ -57,7 +59,27 @@ public class BasicInkExample : MonoBehaviour
         }
     }
 
+    public IEnumerator TTS(string text)
+    {
+        Debug.Log("http://api.voicerss.org/?key=e0556d631477478aa4f1d2f6f77fc62c&hl=en-us&src=" + text);
+        using(UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("http://api.voicerss.org/?key=e0556d631477478aa4f1d2f6f77fc62c&c=OGG&hl=en-us&src=" + text, AudioType.OGGVORBIS))
+        {
+            yield return www.SendWebRequest();
 
+            if(www.isHttpError || www.isNetworkError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                speechPlayer.Stop();
+                //Debug.Log("succeeded");
+                AudioClip speech = DownloadHandlerAudioClip.GetContent(www);
+                speechPlayer.clip = speech;
+                speechPlayer.Play();
+            }
+        }
+    }
 
     void Awake () {
 		// Remove the default message
@@ -202,6 +224,7 @@ public class BasicInkExample : MonoBehaviour
 
     void OnClickChangeChat(string person)
     {
+        bool startedStory = false;
         if(person.Equals("Kayla"))
         {
             currentList = msgListKayla;
@@ -210,6 +233,7 @@ public class BasicInkExample : MonoBehaviour
                 inBetween = false;
                 currAsset = inkJSONAsset1;
                 StartStory();
+                startedStory = true;
             }
             header.text = person;
             if(k2)
@@ -226,13 +250,33 @@ public class BasicInkExample : MonoBehaviour
 
             for(int i = 0; i < currentList.Count; i++)
             {
-                GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+
+                GameObject newMsgO = Instantiate(chatMsgObject, chatPanel.transform);
 
                 newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(currentList[i].text);
 
-                //newMsg.textObject = newTxt.GetComponent<Text>();
+                if (currentList[i].k == 0)
+                {
+                    newMsgO.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.LowerRight;
+                    Destroy(newMsgO.transform.GetChild(0).gameObject);
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = eevee;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(188, 255, 243, 200);
+                }
+                else if (currentList[i].k == 1)
+                {
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = togepi;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+                }
+                else
+                {
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = pikachu;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+                }
 
-                //newMsg.textObject.text = newMsg.text;
+                newMsgO.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(delegate
+                {
+                    StartCoroutine("TTS", currentList[i].text);
+                });
 
                 currentList[i].mo = newMsgO;
             }
@@ -243,6 +287,10 @@ public class BasicInkExample : MonoBehaviour
             }
             else
             {
+                if(startedStory)
+                {
+                    return;
+                }
                 if(canvas.transform.childCount == 0) {
                     if (story.currentChoices.Count > 0)
                     {
@@ -269,6 +317,7 @@ public class BasicInkExample : MonoBehaviour
                 inBetween = false;
                 currAsset = inkJSONAsset2;
                 StartStory();
+                startedStory = true;
             }
             header.text = person;
             if (!k1 || a1)
@@ -285,13 +334,32 @@ public class BasicInkExample : MonoBehaviour
 
             for (int i = 0; i < currentList.Count; i++)
             {
-                GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+                GameObject newMsgO = Instantiate(chatMsgObject, chatPanel.transform);
 
                 newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(currentList[i].text);
 
-                //newMsg.textObject = newTxt.GetComponent<Text>();
+                if (currentList[i].k == 0)
+                {
+                    newMsgO.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.LowerRight;
+                    Destroy(newMsgO.transform.GetChild(0).gameObject);
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = eevee;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(188, 255, 243, 200);
+                }
+                else if (currentList[i].k == 1)
+                {
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = togepi;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+                }
+                else
+                {
+                    newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = pikachu;
+                    newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+                }
 
-                //newMsg.textObject.text = newMsg.text;
+                newMsgO.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(delegate
+                {
+                    StartCoroutine("TTS", currentList[i].text);
+                });
 
                 currentList[i].mo = newMsgO;
             }
@@ -302,6 +370,10 @@ public class BasicInkExample : MonoBehaviour
             }
             else
             {
+                if(startedStory)
+                {
+                    return;
+                }
                 if (canvas.transform.childCount == 0) {
                     if (story.currentChoices.Count > 0)
                     {
@@ -378,10 +450,10 @@ public class BasicInkExample : MonoBehaviour
 
         if (c == 0)
         {
-            //newMsgO.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.LowerRight;
+            newMsgO.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.LowerRight;
+            Destroy(newMsgO.transform.GetChild(0).gameObject);
             newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = eevee;
             newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(188, 255, 243, 200);
-            Debug.Log(newMsgO.transform.GetChild(1).GetComponent<Image>().color);
         }
         else if (c == 1)
         {
@@ -394,8 +466,13 @@ public class BasicInkExample : MonoBehaviour
             newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
         }
 
+        newMsgO.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(delegate
+        {
+            StartCoroutine("TTS", text);
+        });
 
         newMsg.mo = newMsgO;
+        newMsg.k = c;
 
         currentList.Add(newMsg);
 
@@ -600,4 +677,5 @@ public class Message
     public string text;
     //public Text textObject;
 	public GameObject mo;
+    public int k;
 }

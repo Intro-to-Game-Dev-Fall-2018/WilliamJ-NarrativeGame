@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LMDN-Minimal.unity
     guid: ac8028591d98c9b488474c84f7b8baac
+  - enabled: 1
+    path: Assets/Scenes/LMDN-Start.unity
+    guid: d8a83e5aae4c261488e5fbb7d1851557
   m_configObjects: {}
