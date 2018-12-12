@@ -9,13 +9,15 @@ using Ink.Runtime;
 public class BasicInkExample : MonoBehaviour
 {
 
-	public GameObject chatPanel, msgObject;
+    public GameObject chatPanel, msgObject, chatMsgObject;
 
     public Text header, headerStatus, amyChatStatus, kaylaChatStatus;
 
+    public Sprite pikachu, eevee, togepi;
+
     public Button kaylaB, amyB;
 
-	public int currState = 1;
+    public int currState = 1;
 
     public List<Message> currentList;
 
@@ -28,7 +30,14 @@ public class BasicInkExample : MonoBehaviour
     public TextAsset inkJSONAsset2;
     public TextAsset currAsset;
 
+    public AudioSource musicPlayer;
+
+    public AudioClip secrets, howl, moon;
+
+    public Button play, nextT, prevT;
+
     bool inBetween;
+    bool paused = false;
 
     public AudioSource ping;
     public AudioSource typing;
@@ -42,6 +51,10 @@ public class BasicInkExample : MonoBehaviour
     private void Update()
     {
         time.text = System.DateTime.Now.ToString();
+        if(!paused && !musicPlayer.isPlaying)
+        {
+            nextTrack();
+        }
     }
 
 
@@ -49,6 +62,19 @@ public class BasicInkExample : MonoBehaviour
     void Awake () {
 		// Remove the default message
 		RemoveChildren();
+
+        play.onClick.AddListener(delegate
+        {
+            pausePlay();
+        });
+        nextT.onClick.AddListener(delegate
+        {
+            nextTrack();
+        });
+        prevT.onClick.AddListener(delegate
+        {
+            prevTrack();
+        });
 
         kaylaB.onClick.AddListener(delegate {
             OnClickChangeChat("Kayla");
@@ -143,6 +169,7 @@ public class BasicInkExample : MonoBehaviour
                 });
             }
         }
+        
         // If we've read all the content and there's no choices, the story is finished!
         else
         {
@@ -168,7 +195,7 @@ public class BasicInkExample : MonoBehaviour
 	// When we click the choice button, tell the story to choose that choice!
 	void OnClickChoiceButton (Choice choice) {
 		story.ChooseChoiceIndex (choice.index);
-        receiveMessage("You: " + choice.text.Trim());
+        receiveMessage(choice.text.Trim(), 0);
         RefreshView();
 	}
 
@@ -335,24 +362,38 @@ public class BasicInkExample : MonoBehaviour
         }
     }
 
-    public void receiveMessage(string text)
+    public void receiveMessage(string text, int c)
     {
 
         Message newMsg = new Message();
 
         newMsg.text = text;
 
-        //GameObject newTxt = Instantiate(textObject, chatPanel.transform);
 
-        GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
+        //GameObject newMsgO = Instantiate(msgObject, chatPanel.transform);
 
-        //Debug.Log(newMsgO.GetComponentInChildren<TextMeshPro>());
+        GameObject newMsgO = Instantiate(chatMsgObject, chatPanel.transform);
 
         newMsgO.GetComponentInChildren<TextMeshProUGUI>().SetText(text);
 
-        //newMsg.textObject = newTxt.GetComponent<Text>();
+        if (c == 0)
+        {
+            //newMsgO.GetComponent<HorizontalLayoutGroup>().childAlignment = TextAnchor.LowerRight;
+            newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = eevee;
+            newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(188, 255, 243, 200);
+            Debug.Log(newMsgO.transform.GetChild(1).GetComponent<Image>().color);
+        }
+        else if (c == 1)
+        {
+            newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = togepi;
+            newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+        }
+        else
+        {
+            newMsgO.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = pikachu;
+            newMsgO.transform.GetChild(1).GetComponent<Image>().color = new Color32(230, 255, 150, 200);
+        }
 
-        //newMsg.textObject.text = newMsg.text;
 
         newMsg.mo = newMsgO;
 
@@ -362,12 +403,19 @@ public class BasicInkExample : MonoBehaviour
 
     IEnumerator transition(string text)
     {
+
         if(text.Length == 0)
         {
             yield return null;
         }
 
-        while(trans)
+        if (text.Contains("You: "))
+        {
+            receiveMessage(text.Substring(4), 0);
+            yield break;
+        }
+
+        while (trans)
         {
             yield return new WaitForSeconds(0.1f);
         }
@@ -382,9 +430,19 @@ public class BasicInkExample : MonoBehaviour
 
         transitionMsg.text = "...";
 
-        GameObject newMsg0 = Instantiate(msgObject, chatPanel.transform);
+        GameObject newMsg0 = Instantiate(chatMsgObject, chatPanel.transform);
 
         newMsg0.GetComponentInChildren<TextMeshProUGUI>().SetText("...");
+
+        if (currAsset != inkJSONAsset2)
+        {
+            newMsg0.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = togepi;
+        }
+        else
+        {
+            newMsg0.transform.GetChild(0).transform.GetChild(0).GetComponent<Image>().sprite = pikachu;
+        }
+
 
         transitionMsg.mo = newMsg0;
 
@@ -404,7 +462,18 @@ public class BasicInkExample : MonoBehaviour
 
         typing.Stop();
 
-        receiveMessage(text);
+        //receiveMessage(text);
+
+
+        if (currAsset != inkJSONAsset2)
+        {
+            receiveMessage(text, 1);
+        }
+        else
+        {
+            receiveMessage(text, 2);
+        }
+
 
         ping.Play();
 
@@ -439,22 +508,75 @@ public class BasicInkExample : MonoBehaviour
             {
                 k1 = true;
                 amyChatStatus.text = "Active";
+                GameObject.Find("Amy").transform.SetSiblingIndex(2);
             }
             else if (currAsset == inkJSONAsset1)
             {
                 k2 = true;
                 kaylaChatStatus.text = "Offline";
+                GameObject.Find("Kayla").transform.SetSiblingIndex(GameObject.Find("Offline").transform.GetSiblingIndex() + 1);
             }
             else
             {
                 amyChatStatus.text = "Offline";
                 a1 = true;
+                GameObject.Find("Amy").transform.SetSiblingIndex(GameObject.Find("Offline").transform.GetSiblingIndex() + 1);
             }
             inBetween = true;
         }
 
         yield return null;
 
+    }
+
+    public void nextTrack()
+    {
+        musicPlayer.Stop();
+        if(musicPlayer.clip == secrets)
+        {
+            musicPlayer.clip = howl;
+        }
+        else if(musicPlayer.clip == howl)
+        {
+            musicPlayer.clip = moon;
+        }
+        else
+        {
+            musicPlayer.clip = secrets;
+        }
+        musicPlayer.Play();
+    }
+
+    public void pausePlay()
+    {
+        if(musicPlayer.isPlaying)
+        {
+            musicPlayer.Pause();
+            paused = true;
+        }
+        else
+        {
+            paused = false;
+            musicPlayer.Play();
+        }
+    }
+
+    public void prevTrack()
+    {
+        musicPlayer.Stop();
+        if (musicPlayer.clip == secrets)
+        {
+            musicPlayer.clip = moon;
+        }
+        else if (musicPlayer.clip == howl)
+        {
+            musicPlayer.clip = secrets;
+        }
+        else
+        {
+            musicPlayer.clip = howl;
+        }
+        musicPlayer.Play();
     }
 
 
